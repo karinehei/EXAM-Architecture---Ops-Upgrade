@@ -10,9 +10,9 @@ CREATE TABLE reports (
 -- Index for sorting by creation date (used in pagination)
 CREATE INDEX idx_reports_created_at ON reports(created_at DESC);
 
--- Full-text search index for filter queries (PostgreSQL GIN index)
--- This significantly improves performance of LIKE queries with wildcards
-CREATE INDEX idx_reports_title_content_gin ON reports USING gin(to_tsvector('english', coalesce(title, '') || ' ' || coalesce(content, '')));
+-- Note: GIN index for full-text search is PostgreSQL-specific and not supported by H2
+-- For production PostgreSQL, apply the GIN index manually or via a separate migration:
+-- CREATE INDEX idx_reports_title_content_gin ON reports USING gin(to_tsvector('english', coalesce(title, '') || ' ' || coalesce(content, '')));
 
 # --- !Downs
 
