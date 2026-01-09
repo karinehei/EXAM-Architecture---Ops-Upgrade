@@ -21,7 +21,8 @@ class ExamComponents(context: Context) extends BuiltInComponentsFromContext(cont
   
   lazy val homeController = new _root_.controllers.HomeController(controllerComponents)
   lazy val healthController = new _root_.controllers.HealthController(controllerComponents, dbConfigProvider)
-  lazy val reportController = new _root_.controllers.ReportController(controllerComponents, dbConfigProvider)
+  lazy val reportRepository = new _root_.repositories.ReportRepository(dbConfigProvider)(executionContext)
+  lazy val reportController = new _root_.controllers.ReportController(controllerComponents, reportRepository)(executionContext)
   
   // Development authentication filter (only active when DEV_AUTH_ENABLED=true)
   lazy val devAuthFilter = new DevAuthFilter(configuration, executionContext)
