@@ -9,8 +9,13 @@ import filters.{DevAuthFilter, CorrelationIdFilter, MetricsFilter}
 
 class ExamApplicationLoader extends ApplicationLoader {
   def load(context: Context): Application = {
-    LoggerConfigurator(context.environment.classLoader).foreach {
-      _.configure(context.environment, context.initialConfiguration, Map.empty)
+    // Skip logback configuration in test mode to avoid version conflicts
+    // Tests will use Play's default logging configuration
+    val isTestMode = context.environment.mode == Mode.Test
+    if (!isTestMode) {
+      LoggerConfigurator(context.environment.classLoader).foreach {
+        _.configure(context.environment, context.initialConfiguration, Map.empty)
+      }
     }
     new ExamComponents(context).application
   }
