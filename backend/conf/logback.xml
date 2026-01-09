@@ -1,67 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    
     <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
     
-    <!-- Console appender with correlation ID in pattern -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%date{ISO8601} [%level] [%logger] [%mdc{correlationId:-}] %message%n%xException</pattern>
         </encoder>
     </appender>
     
-    <!-- JSON encoder for structured logging (optional - requires logstash-logback-encoder) -->
-    <!-- Uncomment and configure if logstash-logback-encoder is available -->
-    <!--
-    <appender name="JSON_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-            <providers>
-                <timestamp>
-                    <timeZone>UTC</timeZone>
-                </timestamp>
-                <version/>
-                <logLevel/>
-                <message/>
-                <mdc/>
-                <stackTrace/>
-                <pattern>
-                    <pattern>
-                        {
-                            "logger": "%logger",
-                            "thread": "%thread"
-                        }
-                    </pattern>
-                </pattern>
-            </providers>
-        </encoder>
-    </appender>
-    -->
-    
-    <!-- File appender for production -->
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${application.home:-.}/logs/application.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${application.home:-.}/logs/application.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%date{ISO8601} [%level] [%logger] [%mdc{correlationId:-}] %message%n%xException</pattern>
-        </encoder>
-    </appender>
-    
-    <!-- Logger for application -->
     <logger name="play" level="INFO"/>
     <logger name="application" level="INFO"/>
     <logger name="controllers" level="INFO"/>
     <logger name="repositories" level="INFO"/>
-    
-    <!-- Logger for database queries (can be DEBUG for development) -->
     <logger name="slick" level="WARN"/>
     
-    <!-- Root logger -->
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
     </root>
-    
 </configuration>
