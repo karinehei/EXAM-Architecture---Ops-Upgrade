@@ -12,6 +12,7 @@ lazy val root = (project in file("."))
       "org.postgresql" % "postgresql" % "42.6.0",
       "com.typesafe.play" %% "play-slick" % "5.1.0",
       "com.typesafe.play" %% "play-slick-evolutions" % "5.1.0",
+      "net.logstash.logback" % "logstash-logback-encoder" % "7.4" % Optional,
       "org.scalatestplus.play" %% "scalatestplus-play" % "6.0.0" % Test
     )
   )

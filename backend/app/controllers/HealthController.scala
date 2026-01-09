@@ -4,6 +4,7 @@ import javax.inject._
 import play.api.mvc._
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
+import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -16,15 +17,54 @@ class HealthController @Inject()(
   // Lazy initialization to avoid triggering database connection at class load time
   private lazy val dbConfig = dbConfigProvider.get[JdbcProfile]
 
-  def check = Action.async { implicit request =>
-    // Basic health check - can be extended for readiness/liveness
-    // Simplified to avoid triggering database connections during health checks
-    // The database connection will be tested when actually needed
-    Future {
-      Ok(play.api.libs.json.Json.obj(
-        "status" -> "healthy",
-        "database" -> "configured"
+  /**
+   * Liveness probe - indicates if the application is running
+   * Should return 200 if the process is alive, regardless of dependencies
+   */
+  def liveness = Action {
+    Ok(play.api.libs.json.Json.obj(
+      "status" -> "alive",
+      "timestamp" -> System.currentTimeMillis()
+    ))
+  }
+
+  /**
+   * Readiness probe - indicates if the application is ready to serve traffic
+   * Should return 200 only if all critical dependencies (database, etc.) are available
+   */
+  def readiness = Action.async { implicit request =>
+    // Check database connectivity
+    val checkQuery = sql"SELECT 1".as[Int]
+    
+    dbConfig.db.run(checkQuery.headOption).map { result =>
+      if (result.isDefined) {
+        Ok(play.api.libs.json.Json.obj(
+          "status" -> "ready",
+          "database" -> "connected",
+          "timestamp" -> System.currentTimeMillis()
+        ))
+      } else {
+        ServiceUnavailable(play.api.libs.json.Json.obj(
+          "status" -> "not_ready",
+          "database" -> "disconnected",
+          "timestamp" -> System.currentTimeMillis()
+        ))
+      }
+    }.recover { case ex =>
+      ServiceUnavailable(play.api.libs.json.Json.obj(
+        "status" -> "not_ready",
+        "database" -> "error",
+        "error" -> ex.getMessage,
+        "timestamp" -> System.currentTimeMillis()
       ))
-    }(ec)
+    }
+  }
+
+  /**
+   * General health check (backwards compatibility)
+   * Combines liveness and readiness checks
+   */
+  def check = Action.async { implicit request =>
+    readiness(request)
   }
 }

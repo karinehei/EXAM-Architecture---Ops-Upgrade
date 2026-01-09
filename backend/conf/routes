@@ -4,6 +4,9 @@
 
 GET     /                           controllers.HomeController.index
 GET     /health                     controllers.HealthController.check
+GET     /health/liveness            controllers.HealthController.liveness
+GET     /health/readiness           controllers.HealthController.readiness
+GET     /metrics                    controllers.MetricsController.metrics
 GET     /api/v1/reports             controllers.ReportController.list(filters: Option[String], page: Option[Int], pageSize: Option[Int])
 GET     /api/v1/reports/:id         controllers.ReportController.get(id: Long)
 POST    /api/v1/reports             controllers.ReportController.create

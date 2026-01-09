@@ -5,7 +5,8 @@ import play.api._
 import play.api.db.slick.SlickComponents
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.DbName
-import filters.DevAuthFilter
+import filters.{DevAuthFilter, CorrelationIdFilter, MetricsFilter}
+import controllers.MetricsController
 
 class ExamApplicationLoader extends ApplicationLoader {
   def load(context: Context): Application = {
@@ -17,18 +18,21 @@ class ExamApplicationLoader extends ApplicationLoader {
 }
 
 class ExamComponents(context: Context) extends BuiltInComponentsFromContext(context) with SlickComponents {
-  lazy val router = new _root_.router.Routes(httpErrorHandler, homeController, healthController, reportController)
+  lazy val router = new _root_.router.Routes(httpErrorHandler, homeController, healthController, metricsController, reportController)
   
   lazy val homeController = new _root_.controllers.HomeController(controllerComponents)
   lazy val healthController = new _root_.controllers.HealthController(controllerComponents, dbConfigProvider)
   lazy val reportRepository = new _root_.repositories.ReportRepository(dbConfigProvider)(executionContext)
   lazy val reportController = new _root_.controllers.ReportController(controllerComponents, reportRepository)(executionContext)
+  lazy val metricsController = new MetricsController(controllerComponents)
   
-  // Development authentication filter (only active when DEV_AUTH_ENABLED=true)
+  // Filters
+  lazy val correlationIdFilter = new CorrelationIdFilter()(executionContext)
   lazy val devAuthFilter = new DevAuthFilter(configuration, executionContext)
+  lazy val metricsFilter = new MetricsFilter(metricsController, executionContext)
   
-  // Register filters
-  override lazy val httpFilters = Seq(devAuthFilter)
+  // Register filters (order matters: correlation ID first, then auth, then metrics)
+  override lazy val httpFilters = Seq(correlationIdFilter, devAuthFilter, metricsFilter)
   
   // Database configuration (provided by SlickComponents trait)
   // Create DatabaseConfigProvider using slickApi from SlickComponents
