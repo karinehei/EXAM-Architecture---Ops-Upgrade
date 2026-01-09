@@ -14,5 +14,11 @@ lazy val root = (project in file("."))
       "com.typesafe.play" %% "play-slick-evolutions" % "5.1.0",
       "net.logstash.logback" % "logstash-logback-encoder" % "7.4" % Optional,
       "org.scalatestplus.play" %% "scalatestplus-play" % "6.0.0" % Test
+    ),
+    // Force logback version compatible with Play 2.8.19
+    // The method configureByResource(URL) exists in logback 1.3.0+
+    dependencyOverrides ++= Seq(
+      "ch.qos.logback" % "logback-classic" % "1.3.14",
+      "ch.qos.logback" % "logback-core" % "1.3.14"
     )
   )
