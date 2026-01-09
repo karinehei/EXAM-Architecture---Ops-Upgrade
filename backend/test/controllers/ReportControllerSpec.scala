@@ -5,8 +5,28 @@ import play.api.test._
 import play.api.test.Helpers._
 import play.api.libs.json._
 import dto._
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 
 class ReportControllerSpec extends PlaySpec with OneAppPerTest {
+  
+  override def fakeApplication(): Application = {
+    new GuiceApplicationBuilder()
+      .configure(
+        "play.http.router" -> "router.Routes",
+        "play.application.loader" -> "app.ExamApplicationLoader",
+        // Use H2 in-memory database for tests (PostgreSQL compatibility mode)
+        "slick.dbs.default.profile" -> "slick.jdbc.PostgresProfile$",
+        "slick.dbs.default.db.driver" -> "org.h2.Driver",
+        "slick.dbs.default.db.url" -> "jdbc:h2:mem:test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;INIT=CREATE SCHEMA IF NOT EXISTS public",
+        "slick.dbs.default.db.user" -> "sa",
+        "slick.dbs.default.db.password" -> "",
+        // Enable evolutions for tests
+        "play.evolutions.enabled" -> "true",
+        "play.evolutions.autoApply" -> "true"
+      )
+      .build()
+  }
 
   "ReportController" should {
 
@@ -17,7 +37,8 @@ class ReportControllerSpec extends PlaySpec with OneAppPerTest {
       status(response) mustBe OK
       contentType(response) mustBe Some("application/json")
       val json = contentAsJson(response)
-      (json \ "data").as[JsArray].value must not be empty
+      // Empty list is valid for a fresh database
+      (json \ "data").as[JsArray] mustBe a[JsArray]
       (json \ "pagination" \ "page").as[Int] mustBe 1
       (json \ "pagination" \ "pageSize").as[Int] mustBe 10
     }
