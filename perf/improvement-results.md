@@ -19,6 +19,8 @@ ON reports USING gin(to_tsvector('english', coalesce(title, '') || ' ' || coales
 
 **Impact**: Significantly improves performance of `LIKE` queries with wildcards by enabling PostgreSQL's full-text search capabilities.
 
+**Note**: This index is PostgreSQL-specific and should be applied manually to production databases. See `database/migrations/002_add_gin_index.sql` for the migration script. H2 (used in tests) does not support GIN indexes, so this optimization is for production PostgreSQL only.
+
 ### 2. Optimized Count Query Execution
 
 Modified repository to run count and data queries in parallel using `zip`:

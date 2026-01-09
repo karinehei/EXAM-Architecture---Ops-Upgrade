@@ -91,9 +91,12 @@ CREATE INDEX idx_reports_created_at ON reports(created_at DESC);
 - `perf/seed-data.sh` - Script to populate database with test data
 
 **Updated Files**:
-- `database/schema.sql` - Added GIN index and optimized created_at index
-- `backend/conf/evolutions/default/1.sql` - Added indexes for new databases
+- `database/schema.sql` - Added GIN index and optimized created_at index (PostgreSQL)
+- `database/migrations/002_add_gin_index.sql` - Separate migration for GIN index (PostgreSQL only)
+- `backend/conf/evolutions/default/1.sql` - Added optimized created_at index (H2-compatible)
 - `backend/app/repositories/ReportRepository.scala` - Optimized query execution
+
+**Note**: The GIN index is PostgreSQL-specific and not included in the evolution file (which uses H2 for tests). Apply it manually to production PostgreSQL databases using the migration script.
 
 ## Key Achievements
 

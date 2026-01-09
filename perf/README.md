@@ -90,8 +90,11 @@ See `improvement-results.md` for performance measurements after optimizations, i
 ### Implemented Optimizations
 
 1. **Database Index Optimization** (see `improvement-results.md`):
-   - Added composite index on `(title, content)` for filter queries
-   - Optimized count query execution
+   - Added GIN (full-text search) index on `title` and `content` for filter queries (PostgreSQL only)
+   - Optimized `created_at` index for DESC sorting
+   - Optimized count query execution (parallel queries)
+
+**Note**: The GIN index is PostgreSQL-specific and should be applied manually to production databases using `database/migrations/002_add_gin_index.sql`. H2 (used in tests) does not support GIN indexes.
 
 ### Future Optimization Opportunities
 
