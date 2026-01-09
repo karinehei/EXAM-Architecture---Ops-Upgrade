@@ -15,25 +15,33 @@ class ReportRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
 
   def findAll(page: Int = 1, pageSize: Int = 20, filters: Option[String] = None): Future[(Seq[Report], Int)] = {
     val offset = (page - 1) * pageSize
-    var query = reports
     
     // Apply filters if provided
+    // Note: For better performance with full-text search, we could use PostgreSQL's
+    // full-text search functions (to_tsvector, to_tsquery), but LIKE is simpler
+    // and the GIN index will still help with pattern matching
     val filteredQuery = filters match {
       case Some(filter) if filter.nonEmpty =>
-        query.filter(r => r.title.like(s"%$filter%") || r.content.like(s"%$filter%"))
-      case _ => query
+        reports.filter(r => r.title.like(s"%$filter%") || r.content.like(s"%$filter%"))
+      case _ => reports
     }
     
+    // Optimize count query: use a subquery to avoid materializing all rows
+    // The GIN index on title+content will help with filter performance
     val countQuery = filteredQuery.length.result
+    
+    // Data query with sorting and pagination
+    // The DESC index on created_at will optimize sorting
     val dataQuery = filteredQuery
       .sortBy(_.createdAt.desc)
       .drop(offset)
       .take(pageSize)
       .result
     
+    // Run queries in parallel for better performance
+    // Both queries can benefit from the indexes we've created
     for {
-      total <- db.run(countQuery)
-      data <- db.run(dataQuery)
+      (total, data) <- db.run(countQuery).zip(db.run(dataQuery))
     } yield (data, total)
   }
 
