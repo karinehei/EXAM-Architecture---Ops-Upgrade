@@ -18,8 +18,11 @@ lazy val root = (project in file("."))
     // Force logback version compatible with Play 2.8.19
     // Play 2.8.19 requires configureByResource(URL) which was removed in logback 1.4.9+
     // Use 1.4.8 which is the last version with this method
+    // Force Jackson version compatible with scala module 2.14.3
+    // scala module 2.14.3 requires jackson-databind >= 2.14.0 and < 2.15.0
     dependencyOverrides ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.4.8",
-      "ch.qos.logback" % "logback-core" % "1.4.8"
+      "ch.qos.logback" % "logback-core" % "1.4.8",
+      "com.fasterxml.jackson.core" % "jackson-databind" % "2.14.2"
     )
   )
