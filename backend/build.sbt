@@ -13,7 +13,8 @@ lazy val root = (project in file("."))
       "com.typesafe.play" %% "play-slick" % "5.1.0",
       "com.typesafe.play" %% "play-slick-evolutions" % "5.1.0",
       "net.logstash.logback" % "logstash-logback-encoder" % "7.4" % Optional,
-      "org.scalatestplus.play" %% "scalatestplus-play" % "6.0.0" % Test
+      "org.scalatestplus.play" %% "scalatestplus-play" % "6.0.0" % Test,
+      "com.h2database" % "h2" % "2.2.224" % Test
     ),
     // Force logback version compatible with Play 2.8.19
     // Play 2.8.19 requires configureByResource(URL) which was removed in logback 1.4.9+
