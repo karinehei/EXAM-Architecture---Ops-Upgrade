@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: exam-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-exam}
+      POSTGRES_USER: ${DB_USERNAME:-exam_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-exam_password}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-exam_user}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - exam-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: exam-backend
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/exam
+      DB_USERNAME: ${DB_USERNAME:-exam_user}
+      DB_PASSWORD: ${DB_PASSWORD:-exam_password}
+      DB_NAME: ${DB_NAME:-exam}
+      APPLICATION_SECRET: ${APPLICATION_SECRET:-changeme-in-production}
+      DEV_AUTH_ENABLED: ${DEV_AUTH_ENABLED:-false}
+      DEV_AUTH_USER: ${DEV_AUTH_USER:-dev-user}
+    ports:
+      - "${BACKEND_PORT:-9000}:9000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - exam-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: exam-frontend
+    ports:
+      - "${FRONTEND_PORT:-4200}:4200"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - exam-network
+    environment:
+      - NODE_ENV=development
+
+  # Optional reverse proxy (uncomment to use)
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: exam-nginx
+  #   ports:
+  #     - "${NGINX_PORT:-8080}:80"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+  #   depends_on:
+  #     - frontend
+  #     - backend
+  #   networks:
+  #     - exam-network
+
+networks:
+  exam-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
