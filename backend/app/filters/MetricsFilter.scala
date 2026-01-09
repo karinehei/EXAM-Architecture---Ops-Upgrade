@@ -3,7 +3,6 @@ package filters
 import javax.inject.Inject
 import play.api.mvc._
 import play.api.Logger
-import controllers.MetricsController
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -14,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
  * Records metrics for Prometheus-style metrics endpoint.
  */
 class MetricsFilter @Inject()(
-  metricsController: MetricsController,
+  metricsController: _root_.controllers.MetricsController,
   implicit val ec: ExecutionContext
 ) extends EssentialFilter {
 

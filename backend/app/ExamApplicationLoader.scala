@@ -6,7 +6,6 @@ import play.api.db.slick.SlickComponents
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.DbName
 import filters.{DevAuthFilter, CorrelationIdFilter, MetricsFilter}
-import controllers.MetricsController
 
 class ExamApplicationLoader extends ApplicationLoader {
   def load(context: Context): Application = {
@@ -24,7 +23,7 @@ class ExamComponents(context: Context) extends BuiltInComponentsFromContext(cont
   lazy val healthController = new _root_.controllers.HealthController(controllerComponents, dbConfigProvider)
   lazy val reportRepository = new _root_.repositories.ReportRepository(dbConfigProvider)(executionContext)
   lazy val reportController = new _root_.controllers.ReportController(controllerComponents, reportRepository)(executionContext)
-  lazy val metricsController = new MetricsController(controllerComponents)
+  lazy val metricsController = new _root_.controllers.MetricsController(controllerComponents)
   
   // Filters
   lazy val correlationIdFilter = new CorrelationIdFilter()(executionContext)

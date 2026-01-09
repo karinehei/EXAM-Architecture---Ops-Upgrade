@@ -3,6 +3,7 @@ package filters
 import javax.inject.Inject
 import play.api.mvc._
 import play.api.Logger
+import org.slf4j.MDC
 
 import scala.concurrent.{ExecutionContext, Future}
 import java.util.UUID
@@ -27,18 +28,17 @@ class CorrelationIdFilter @Inject()(
       .getOrElse(UUID.randomUUID().toString)
 
     // Add to MDC for logging
-    play.api.Logger.mdc += (CorrelationIdMDCKey -> correlationId)
+    MDC.put(CorrelationIdMDCKey, correlationId)
 
     // Process request
     val result = next(request.withHeaders(
       request.headers.add(CorrelationIdHeader -> correlationId)
     ))
 
-    // Add correlation ID to response headers
-    result.map(_.withHeaders(CorrelationIdHeader -> correlationId))
-      .andThen { case _ =>
-        // Clean up MDC
-        play.api.Logger.mdc -= CorrelationIdMDCKey
-      }
+    // Add correlation ID to response headers and clean up MDC
+    result.map { response =>
+      MDC.remove(CorrelationIdMDCKey)
+      response.withHeaders(CorrelationIdHeader -> correlationId)
+    }
   }
 }
