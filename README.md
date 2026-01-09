@@ -2,7 +2,7 @@
 
 This is a fork of CSC's EXAM system with comprehensive architecture and operations improvements.
 
-[![CI](https://github.com/YOUR-ORG/YOUR-REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR-ORG/YOUR-REPO/actions/workflows/ci.yml)
+[![CI](https://github.com/karinehei/EXAM-Architecture---Ops-Upgrade/actions/workflows/ci.yml/badge.svg)](https://github.com/karinehei/EXAM-Architecture---Ops-Upgrade/actions/workflows/ci.yml)
 
 ## Technology Stack
 
