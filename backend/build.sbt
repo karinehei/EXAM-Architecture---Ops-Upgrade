@@ -16,9 +16,10 @@ lazy val root = (project in file("."))
       "org.scalatestplus.play" %% "scalatestplus-play" % "6.0.0" % Test
     ),
     // Force logback version compatible with Play 2.8.19
-    // The method configureByResource(URL) exists in logback 1.3.0+
+    // Play 2.8.19 requires configureByResource(URL) which was removed in logback 1.4.9+
+    // Use 1.4.8 which is the last version with this method
     dependencyOverrides ++= Seq(
-      "ch.qos.logback" % "logback-classic" % "1.3.14",
-      "ch.qos.logback" % "logback-core" % "1.3.14"
+      "ch.qos.logback" % "logback-classic" % "1.4.8",
+      "ch.qos.logback" % "logback-core" % "1.4.8"
     )
   )
