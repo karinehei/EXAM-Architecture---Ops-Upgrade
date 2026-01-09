@@ -39,7 +39,9 @@ jobs:
 
       - name: Install SBT
         run: |
-          curl -L https://github.com/sbt/sbt/releases/download/v1.9.7/sbt-1.9.7.tgz | tar xz -C /usr/local
+          curl -L https://github.com/sbt/sbt/releases/download/v1.9.7/sbt-1.9.7.tgz | tar xz
+          sudo mv sbt /usr/local/sbt
+          sudo chmod +x /usr/local/sbt/bin/sbt
           echo "/usr/local/sbt/bin" >> $GITHUB_PATH
 
       - name: Run SBT compile
