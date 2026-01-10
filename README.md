@@ -33,6 +33,35 @@ Then access:
 
 **📖 Full setup instructions**: [docs/QUICKSTART.md](docs/QUICKSTART.md)
 
+## Screenshots
+
+### Frontend Application
+
+![EXAM System Frontend](docs/screenshots/frontend-reports.png)
+
+The EXAM System frontend displaying the reports list with two sample reports:
+- **New Report** - Created on Jan 10, 2026
+- **Updated Report** - Created on Jan 10, 2026
+
+The application successfully loads data from the backend API and displays it in a clean, accessible interface.
+
+### Swagger UI - Interactive API Documentation
+
+![Swagger UI](docs/screenshots/swagger-ui.png)
+
+The Swagger UI provides interactive API documentation for the EXAM System:
+- **API Overview**: Complete API description with authentication, pagination, and error handling information
+- **Interactive Testing**: Try out all API endpoints directly from the browser
+- **Request/Response Schemas**: View detailed schemas for all data models
+- **Available Endpoints**: 
+  - `GET /api/v1/reports` - List reports
+  - `POST /api/v1/reports` - Create a new report
+  - `GET /api/v1/reports/{id}` - Get a report by ID
+  - `PUT /api/v1/reports/{id}` - Update a report
+  - `DELETE /api/v1/reports/{id}` - Delete a report
+
+Access Swagger UI at: http://localhost:9000/swagger
+
 ## Project Structure
 
 ```
