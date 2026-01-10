@@ -4,7 +4,9 @@ FROM eclipse-temurin:17-jdk-jammy AS build
 WORKDIR /app
 
 # Install sbt
-RUN apt-get update && apt-get install -y curl && \
+# Use --allow-releaseinfo-change to handle repository updates gracefully
+RUN apt-get update --allow-releaseinfo-change || true && \
+    apt-get install -y curl && \
     curl -L https://github.com/sbt/sbt/releases/download/v1.9.7/sbt-1.9.7.tgz | tar xz -C /usr/local && \
     ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -29,7 +31,9 @@ FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
 # Install unzip and curl (for health checks)
-RUN apt-get update && apt-get install -y unzip curl && \
+# Use --allow-releaseinfo-change to handle repository updates gracefully
+RUN apt-get update --allow-releaseinfo-change || true && \
+    apt-get install -y unzip curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy built distribution
