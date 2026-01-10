@@ -1,8 +1,30 @@
 <div class="report-list">
   <h2>Reports</h2>
-  <ul>
-    <li *ngFor="let report of reports">
-      {{ report.title }}
+  
+  <div *ngIf="isLoading" role="status" aria-live="polite" aria-busy="true">
+    <p>Loading reports...</p>
+  </div>
+  
+  <div *ngIf="error" role="alert" aria-live="assertive">
+    <p>{{ error }}</p>
+    <button type="button" (click)="loadReports()" aria-label="Retry loading reports">
+      Retry
+    </button>
+  </div>
+  
+  <div *ngIf="!isLoading && !error && reports.length === 0" role="status" aria-live="polite">
+    <p>No reports available.</p>
+  </div>
+  
+  <ul *ngIf="!isLoading && !error && reports.length > 0" role="list" aria-label="Report list">
+    <li *ngFor="let report of reports; let i = index" role="listitem">
+      <article>
+        <h3>{{ report.title }}</h3>
+        <p *ngIf="report.content">{{ report.content }}</p>
+        <time *ngIf="report.createdAt" [attr.datetime]="report.createdAt">
+          Created: {{ report.createdAt | date:'medium' }}
+        </time>
+      </article>
     </li>
   </ul>
 </div>
