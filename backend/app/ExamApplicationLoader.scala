@@ -22,10 +22,11 @@ class ExamApplicationLoader extends ApplicationLoader {
 }
 
 class ExamComponents(context: Context) extends BuiltInComponentsFromContext(context) with SlickComponents {
-  lazy val router = new _root_.router.Routes(httpErrorHandler, homeController, healthController, metricsController, reportController)
+  lazy val router = new _root_.router.Routes(httpErrorHandler, homeController, healthController, metricsController, swaggerController, reportController)
   
   lazy val homeController = new _root_.controllers.HomeController(controllerComponents)
   lazy val healthController = new _root_.controllers.HealthController(controllerComponents, dbConfigProvider)
+  lazy val swaggerController = new _root_.controllers.SwaggerController(controllerComponents, environment)
   lazy val reportRepository = new _root_.repositories.ReportRepository(dbConfigProvider)(executionContext)
   lazy val reportController = new _root_.controllers.ReportController(controllerComponents, reportRepository)(executionContext)
   lazy val metricsController = new _root_.controllers.MetricsController(controllerComponents)

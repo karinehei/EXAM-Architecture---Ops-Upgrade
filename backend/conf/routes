@@ -7,6 +7,8 @@ GET     /health                     controllers.HealthController.check
 GET     /health/liveness            controllers.HealthController.liveness
 GET     /health/readiness           controllers.HealthController.readiness
 GET     /metrics                    controllers.MetricsController.metrics
+GET     /swagger                    controllers.SwaggerController.ui
+GET     /api-docs/openapi.yaml      controllers.SwaggerController.openapiYaml
 GET     /api/v1/reports             controllers.ReportController.list(filters: Option[String], page: Option[Int], pageSize: Option[Int])
 GET     /api/v1/reports/:id         controllers.ReportController.get(id: Long)
 POST    /api/v1/reports             controllers.ReportController.create

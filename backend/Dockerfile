@@ -22,6 +22,9 @@ RUN sbt -batch update
 # Copy source code
 COPY . .
 
+# Copy OpenAPI spec for Swagger UI
+COPY conf/api-docs/openapi.yaml conf/api-docs/openapi.yaml
+
 # Build application
 RUN sbt -batch dist
 

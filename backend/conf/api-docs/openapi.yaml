@@ -1,0 +1,358 @@
+openapi: 3.0.3
+info:
+  title: EXAM System API
+  description: |
+    REST API for the EXAM system. This API provides endpoints for managing reports.
+    
+    ## Authentication
+    In production, this API uses Shibboleth/HAKA authentication. For local development,
+    dev auth mode can be enabled (see configuration).
+    
+    ## Pagination
+    List endpoints support pagination using `page` and `pageSize` query parameters.
+    The response includes pagination metadata.
+    
+    ## Error Handling
+    All errors follow a consistent format with `error`, `message`, and optional `details` fields.
+    
+    ## Idempotency
+    - PUT operations are idempotent - multiple identical requests have the same effect
+    - DELETE operations are idempotent - deleting a non-existent resource returns 404 but is safe to retry
+  version: 1.0.0
+  contact:
+    name: EXAM System Support
+    email: support@example.com
+
+servers:
+  - url: http://localhost:9000
+    description: Local development server
+  - url: https://api.example.com
+    description: Production server
+
+tags:
+  - name: reports
+    description: Report management operations
+
+paths:
+  /api/v1/reports:
+    get:
+      summary: List reports
+      description: |
+        Retrieve a paginated list of reports. Supports filtering by title or content.
+      operationId: listReports
+      tags:
+        - reports
+      parameters:
+        - name: filters
+          in: query
+          description: Filter reports by title or content (case-insensitive partial match)
+          required: false
+          schema:
+            type: string
+            example: "test"
+        - name: page
+          in: query
+          description: Page number (1-based)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+            example: 20
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReportResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    post:
+      summary: Create a new report
+      description: Creates a new report with the provided title and content.
+      operationId: createReport
+      tags:
+        - reports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReportRequest'
+            example:
+              title: "New Report"
+              content: "Report content here"
+      responses:
+        '201':
+          description: Report created successfully
+          headers:
+            Location:
+              description: URL of the created report
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/reports/{id}:
+    get:
+      summary: Get a report by ID
+      description: Retrieves a single report by its ID.
+      operationId: getReport
+      tags:
+        - reports
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Report ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResponse'
+        '404':
+          description: Report not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    put:
+      summary: Update a report
+      description: Updates an existing report. This operation is idempotent.
+      operationId: updateReport
+      tags:
+        - reports
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Report ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateReportRequest'
+            example:
+              title: "Updated Report"
+              content: "Updated content"
+      responses:
+        '200':
+          description: Report updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Report not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    delete:
+      summary: Delete a report
+      description: Deletes a report by ID. This operation is idempotent.
+      operationId: deleteReport
+      tags:
+        - reports
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Report ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '204':
+          description: Report deleted successfully
+        '404':
+          description: Report not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    ReportResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique report identifier
+          example: 1
+        title:
+          type: string
+          description: Report title
+          example: "Sample Report"
+        content:
+          type: string
+          description: Report content
+          example: "This is the report content"
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of creation
+          example: "2026-01-09T12:00:00Z"
+      required:
+        - id
+        - title
+        - createdAt
+
+    CreateReportRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Report title
+          minLength: 1
+          maxLength: 255
+          example: "New Report"
+        content:
+          type: string
+          description: Report content
+          example: "Report content here"
+      required:
+        - title
+
+    UpdateReportRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Report title
+          minLength: 1
+          maxLength: 255
+          example: "Updated Report"
+        content:
+          type: string
+          description: Report content
+          example: "Updated content"
+      required:
+        - title
+
+    PaginatedReportResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportResponse'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+      required:
+        - data
+        - pagination
+
+    PaginationInfo:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number (1-based)
+          example: 1
+        pageSize:
+          type: integer
+          description: Number of items per page
+          example: 20
+        total:
+          type: integer
+          description: Total number of items
+          example: 100
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 5
+      required:
+        - page
+        - pageSize
+        - total
+        - totalPages
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: "NOT_FOUND"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Report with id 1 not found"
+        details:
+          type: string
+          description: Additional error details (optional)
+          example: "The requested resource does not exist"
+      required:
+        - error
+        - message
