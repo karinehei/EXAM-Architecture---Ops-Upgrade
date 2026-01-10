@@ -99,6 +99,7 @@ Access Swagger UI at: http://localhost:9000/swagger
 │   ├── security/         # Security documentation
 │   ├── accessibility/   # Accessibility notes
 │   ├── observability/   # Observability documentation
+│   ├── screenshots/     # Application screenshots
 │   └── QUICKSTART.md     # Quick start guide
 ├── perf/                 # Performance tests
 │   ├── load-test.js      # k6 load test script
