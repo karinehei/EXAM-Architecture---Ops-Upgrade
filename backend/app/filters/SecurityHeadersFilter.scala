@@ -64,13 +64,42 @@ class SecurityHeadersFilter @Inject()(
       next(request)
     } else {
       next(request).map { result =>
+        // Swagger UI needs a more permissive CSP to load external resources
+        val path = request.path
+        val isSwaggerPath = path == "/swagger" || path.startsWith("/api-docs/")
+        
+        // Log for debugging
+        if (path.contains("swagger") || path.contains("api-docs")) {
+          logger.info(s"SecurityHeadersFilter: path='$path', isSwaggerPath=$isSwaggerPath")
+        }
+        
+        // More permissive CSP for Swagger UI
+        val swaggerCsp = 
+          "default-src 'self'; " +
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; " +
+          "style-src 'self' 'unsafe-inline' https://unpkg.com; " +
+          "img-src 'self' data: https:; " +
+          "font-src 'self' data: https://unpkg.com; " +
+          "connect-src 'self' https:; " +
+          "frame-ancestors 'none'; " +
+          "base-uri 'self'; " +
+          "form-action 'self'"
+        
+        val effectiveCsp = if (isSwaggerPath) {
+          logger.info(s"Using Swagger CSP for path: $path")
+          swaggerCsp
+        } else {
+          logger.debug(s"Using default CSP for path: $path")
+          cspPolicy
+        }
+        
         val baseHeaders = Seq(
           // X-Frame-Options: Prevent clickjacking
           "X-Frame-Options" -> "DENY",
           // X-Content-Type-Options: Prevent MIME sniffing
           "X-Content-Type-Options" -> "nosniff",
           // Content-Security-Policy: Restrict resource loading
-          "Content-Security-Policy" -> cspPolicy,
+          "Content-Security-Policy" -> effectiveCsp,
           // X-XSS-Protection: Enable XSS filter (legacy, but still useful)
           "X-XSS-Protection" -> "1; mode=block",
           // Referrer-Policy: Control referrer information
