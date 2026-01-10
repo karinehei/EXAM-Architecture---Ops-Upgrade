@@ -12,15 +12,15 @@ import java.time.Instant
 
 /**
  * Rate Limiting Filter
- * 
+ *
  * Implements token bucket algorithm for rate limiting API endpoints.
  * Limits requests per IP address to prevent abuse and DoS attacks.
- * 
+ *
  * Configuration:
  * - exam.rate.limit.enabled: Enable/disable rate limiting (default: true)
  * - exam.rate.limit.requests: Number of requests allowed (default: 100)
  * - exam.rate.limit.window: Time window in seconds (default: 60)
- * - exam.rate.limit.api.paths: Comma-separated list of paths to rate limit (default: /api/v1/*)
+ * - exam.rate.limit.api.paths: Comma-separated list of paths to rate limit
  */
 class RateLimitFilter @Inject()(
   configuration: Configuration,
