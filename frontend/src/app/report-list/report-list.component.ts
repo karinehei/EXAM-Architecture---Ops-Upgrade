@@ -11,7 +11,8 @@ interface Report {
 @Component({
   selector: 'app-report-list',
   templateUrl: './report-list.component.html',
-  styleUrls: ['./report-list.component.css']
+  styleUrls: ['./report-list.component.css'],
+  standalone: false
 })
 export class ReportListComponent implements OnInit {
   reports: Report[] = [];
