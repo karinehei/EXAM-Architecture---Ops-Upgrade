@@ -59,3 +59,7 @@ restart: ## Restart all services
 
 status: ## Show status of all services
 	docker compose ps
+
+clean-pid: ## Remove stale RUNNING_PID file from backend container
+	@echo "Removing stale RUNNING_PID file..."
+	docker compose exec backend rm -f /app/exam-backend/RUNNING_PID || echo "Container not running or file doesn't exist"

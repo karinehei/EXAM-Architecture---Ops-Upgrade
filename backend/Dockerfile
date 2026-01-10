@@ -42,4 +42,15 @@ WORKDIR /app/exam-backend
 
 EXPOSE 9000
 
-CMD ["./bin/exam-backend", "-Dconfig.file=conf/application.conf"]
+# Create startup script that removes stale RUNNING_PID file
+RUN echo '#!/bin/bash\n\
+# Remove stale RUNNING_PID file if it exists\n\
+if [ -f RUNNING_PID ]; then\n\
+  echo "Removing stale RUNNING_PID file..."\n\
+  rm -f RUNNING_PID\n\
+fi\n\
+# Start the application\n\
+exec ./bin/exam-backend -Dconfig.file=conf/application.conf\n\
+' > /app/exam-backend/start.sh && chmod +x /app/exam-backend/start.sh
+
+CMD ["/app/exam-backend/start.sh"]

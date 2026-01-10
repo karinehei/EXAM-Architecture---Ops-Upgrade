@@ -24,6 +24,7 @@ lazy val root = (project in file("."))
     dependencyOverrides ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.4.8",
       "ch.qos.logback" % "logback-core" % "1.4.8",
-      "com.fasterxml.jackson.core" % "jackson-databind" % "2.14.2"
+      "com.fasterxml.jackson.core" % "jackson-databind" % "2.14.2",
+      "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.3"
     )
   )
