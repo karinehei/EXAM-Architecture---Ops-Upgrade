@@ -2,6 +2,8 @@
 
 This is a fork of CSC's EXAM system with comprehensive architecture and operations improvements.
 
+**License**: [MIT License](LICENSE) - Copyright (c) 2026 Karine Heinonen
+
 [![CI](https://github.com/karinehei/EXAM-Architecture---Ops-Upgrade/actions/workflows/ci.yml/badge.svg)](https://github.com/karinehei/EXAM-Architecture---Ops-Upgrade/actions/workflows/ci.yml)
 
 ## Technology Stack
@@ -186,4 +188,4 @@ See [docs/QUICKSTART.md](docs/QUICKSTART.md) for detailed command reference.
 
 ## License
 
-[Add your license information here]
+ [MIT License](LICENSE) - Copyright (c) 2026 Karine Heinonen
