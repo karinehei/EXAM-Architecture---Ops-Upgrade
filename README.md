@@ -38,22 +38,47 @@ Then access:
 .
 ├── backend/              # Play Framework application
 │   ├── app/              # Application code
+│   │   ├── controllers/  # REST API controllers
+│   │   ├── filters/      # HTTP filters (auth, rate limit, etc.)
+│   │   ├── models/       # Data models
+│   │   ├── repositories/ # Data access layer
+│   │   └── dto/          # Data transfer objects
 │   ├── conf/             # Configuration files
+│   │   ├── routes        # URL routing
+│   │   ├── application.conf
+│   │   └── evolutions/   # Database migrations
+│   ├── test/             # Unit and integration tests
+│   ├── project/          # SBT build configuration
+│   ├── build.sbt         # Build definition
 │   └── Dockerfile        # Backend container
-├── frontend/             # Angular application
+├── frontend/             # Angular 21 application
 │   ├── src/              # Source code
-│   └── Dockerfile        # Frontend container
-├── database/             # Database schema
+│   │   └── app/          # Angular components
+│   ├── angular.json      # Angular configuration
+│   ├── package.json      # Dependencies
+│   ├── Dockerfile        # Frontend container (dev)
+│   └── Dockerfile.prod   # Frontend container (production)
+├── database/             # Database schema and migrations
+│   ├── schema.sql        # Initial schema
+│   └── migrations/       # Database migration scripts
 ├── docs/                  # Documentation
-│   ├── api/              # API documentation
-│   ├── architecture/     # Architecture diagrams
+│   ├── api/              # API documentation (OpenAPI)
+│   ├── architecture/     # Architecture diagrams (C4 model)
 │   ├── adr/              # Architecture Decision Records
 │   ├── security/         # Security documentation
-│   └── accessibility/    # Accessibility notes
+│   ├── accessibility/   # Accessibility notes
+│   ├── observability/   # Observability documentation
+│   └── QUICKSTART.md     # Quick start guide
 ├── perf/                 # Performance tests
+│   ├── load-test.js      # k6 load test script
+│   └── README.md         # Performance testing guide
+├── .github/              # GitHub Actions workflows
+│   └── workflows/
+│       └── ci.yml        # CI/CD pipeline
 ├── docker-compose.yml    # Local development environment
 ├── Makefile              # Convenience commands
-└── .env.example          # Environment variables template
+├── LICENSE               # MIT License
+└── README.md             # This file
 ```
 
 ## Development
@@ -177,14 +202,6 @@ make clean         # Stop and remove volumes
 ```
 
 See [docs/QUICKSTART.md](docs/QUICKSTART.md) for detailed command reference.
-
-## Contributing
-
-1. Read [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
-2. Create a feature branch
-3. Make your changes with tests
-4. Ensure CI passes
-5. Submit a pull request
 
 ## License
 
