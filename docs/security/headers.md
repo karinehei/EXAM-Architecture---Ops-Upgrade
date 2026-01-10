@@ -63,8 +63,8 @@ export SECURITY_HEADERS_HSTS_MAX_AGE=31536000  # 1 year in seconds
 **Default Policy**:
 ```
 default-src 'self';
-script-src 'self' 'unsafe-inline' 'unsafe-eval';
-style-src 'self' 'unsafe-inline';
+script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com;
+style-src 'self' 'unsafe-inline' https://unpkg.com;
 img-src 'self' data: https:;
 font-src 'self' data:;
 connect-src 'self' https:;
@@ -75,8 +75,8 @@ form-action 'self'
 
 **Directives**:
 - `default-src 'self'`: Only allow resources from same origin
-- `script-src 'self' 'unsafe-inline' 'unsafe-eval'`: Allow scripts from same origin, inline scripts, and eval (required for Angular)
-- `style-src 'self' 'unsafe-inline'`: Allow styles from same origin and inline styles
+- `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com`: Allow scripts from same origin, inline scripts, eval (required for Angular), and unpkg.com (for Swagger UI)
+- `style-src 'self' 'unsafe-inline' https://unpkg.com`: Allow styles from same origin, inline styles, and unpkg.com (for Swagger UI)
 - `img-src 'self' data: https:`: Allow images from same origin, data URIs, and HTTPS
 - `font-src 'self' data:`: Allow fonts from same origin and data URIs
 - `connect-src 'self' https:`: Allow API calls to same origin and HTTPS

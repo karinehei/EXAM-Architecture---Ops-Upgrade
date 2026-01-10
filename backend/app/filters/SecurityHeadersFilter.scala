@@ -45,10 +45,11 @@ class SecurityHeadersFilter @Inject()(
 
   // Default Content Security Policy
   // Allows same-origin resources, inline scripts/styles (for Angular), and API calls
+  // Also allows unpkg.com for Swagger UI resources
   private val defaultCsp = 
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " + // unsafe-inline/unsafe-eval for Angular
-    "style-src 'self' 'unsafe-inline'; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; " + // unpkg.com for Swagger UI
+    "style-src 'self' 'unsafe-inline' https://unpkg.com; " + // unpkg.com for Swagger UI
     "img-src 'self' data: https:; " +
     "font-src 'self' data:; " +
     "connect-src 'self' https:; " +
