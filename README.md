@@ -126,8 +126,35 @@ The EXAM system includes multiple security controls:
 
 ## Accessibility
 
-- **A11y Notes**: [docs/accessibility/a11y-notes.md](docs/accessibility/a11y-notes.md)
-- **A11y Testing**: [docs/accessibility/README.md](docs/accessibility/README.md)
+The EXAM system is designed to be accessible to all users, following **WCAG 2.1 Level AA** standards.
+
+### Accessibility Features
+
+- **Semantic HTML**: Proper use of HTML5 semantic elements
+- **ARIA Labels**: Comprehensive ARIA labels and roles for screen readers
+- **Keyboard Navigation**: All interactive elements are keyboard accessible
+- **Focus Indicators**: Visible focus styles for keyboard users
+- **Color Contrast**: Text meets WCAG AA contrast requirements (4.5:1)
+- **Status Announcements**: Dynamic content updates are announced to screen readers
+
+### Accessibility Documentation
+
+- **A11y Notes**: [docs/accessibility/a11y-notes.md](docs/accessibility/a11y-notes.md) - Findings and fixes
+- **A11y Guide**: [docs/accessibility/README.md](docs/accessibility/README.md) - Complete accessibility documentation
+
+### Testing Accessibility
+
+```bash
+# Run automated accessibility scan
+cd frontend
+npm install
+npm start  # In one terminal
+npm run a11y  # In another terminal
+```
+
+Or use browser DevTools:
+- Chrome: Lighthouse → Accessibility audit
+- Firefox: Accessibility panel
 
 ## Architecture
 
