@@ -7,7 +7,7 @@ This is a fork of CSC's EXAM system with comprehensive architecture and operatio
 ## Technology Stack
 
 - **Backend**: Play Framework (Scala 2.13)
-- **Frontend**: Angular 17
+- **Frontend**: Angular 21
 - **Database**: PostgreSQL 16
 - **Reverse Proxy**: Apache (production), nginx (optional local)
 - **Authentication**: Shibboleth/HAKA (production), dev mode for local development
