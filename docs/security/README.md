@@ -37,6 +37,14 @@ The EXAM system implements multiple layers of security controls to protect again
   - User tracking
   - Compliance support
 
+### 5. Dependency Vulnerability Management
+
+- **[Dependency Vulnerabilities](dependency-vulnerabilities.md)**: Known vulnerabilities and risk management
+  - Current vulnerability status
+  - Risk assessment
+  - Upgrade strategy
+  - Mitigation controls
+
 ## Quick Start
 
 ### Enable All Security Features

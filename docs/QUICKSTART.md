@@ -191,9 +191,23 @@ If you get port conflicts:
    make logs-backend
    ```
 
-2. Verify database is ready (backend waits for DB health check)
+2. **"Application already running" error** (RUNNING_PID file):
+   If you see `This application is already running (or delete /app/exam-backend/RUNNING_PID file)`:
+   ```bash
+   # Remove stale RUNNING_PID file
+   make clean-pid
+   
+   # Or manually:
+   docker compose exec backend rm -f /app/exam-backend/RUNNING_PID
+   
+   # Then restart
+   docker compose restart backend
+   ```
+   **Note**: The Dockerfile now automatically removes stale RUNNING_PID files on startup, but you may need to rebuild the image.
 
-3. Check application configuration:
+3. Verify database is ready (backend waits for DB health check)
+
+4. Check application configuration:
    ```bash
    docker compose exec backend cat conf/application.conf
    ```
