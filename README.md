@@ -88,9 +88,41 @@ See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for:
 
 ## Security Notes
 
+### Security Features
+
+The EXAM system includes multiple security controls:
+
+- **Rate Limiting**: Protects API endpoints from abuse and DoS attacks
+  - Default: 100 requests per 60 seconds per IP
+  - Configurable via `RATE_LIMIT_*` environment variables
+  - See [Rate Limiting Documentation](docs/security/rate-limiting.md)
+
+- **Security Headers**: HTTP security headers for browser protection
+  - HSTS, X-Frame-Options, CSP, and more
+  - Enabled by default
+  - See [Security Headers Documentation](docs/security/headers.md)
+
+- **Audit Logging**: Comprehensive logging of all API access
+  - Tracks user, IP, endpoint, timestamp, and more
+  - Structured format for easy parsing
+  - See [Audit Logging Documentation](docs/security/audit-logging.md)
+
+### Security Configuration
+
+**⚠️ Important Security Settings**:
+
 - **Dev Authentication**: Never enable `DEV_AUTH_ENABLED=true` in production
-- **Threat Model**: [docs/security/threat-model.md](docs/security/threat-model.md)
-- **Security Controls**: [docs/security/README.md](docs/security/README.md)
+- **Application Secret**: Always set a strong `APPLICATION_SECRET` in production
+- **HTTPS**: Use HTTPS in production (required for HSTS)
+- **Rate Limits**: Adjust rate limits based on your traffic patterns
+
+### Security Documentation
+
+- **Threat Model**: [docs/security/threat-model.md](docs/security/threat-model.md) - Comprehensive threat analysis
+- **Security Controls**: [docs/security/README.md](docs/security/README.md) - Complete security documentation
+- **Rate Limiting**: [docs/security/rate-limiting.md](docs/security/rate-limiting.md)
+- **Security Headers**: [docs/security/headers.md](docs/security/headers.md)
+- **Audit Logging**: [docs/security/audit-logging.md](docs/security/audit-logging.md)
 
 ## Accessibility
 
