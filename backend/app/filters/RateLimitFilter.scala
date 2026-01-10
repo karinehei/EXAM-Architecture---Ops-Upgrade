@@ -9,6 +9,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import java.util.concurrent.ConcurrentHashMap
 import scala.jdk.CollectionConverters._
 import java.time.Instant
+import play.api.libs.streams.Accumulator
+import akka.util.ByteString
 
 /**
  * Rate Limiting Filter
@@ -68,18 +70,20 @@ class RateLimitFilter @Inject()(
         case Some((count, storedWindowStart)) if storedWindowStart == windowStart =>
           if (count >= maxRequests) {
             logger.warn(s"Rate limit exceeded for IP: $clientIp, path: ${request.path}")
-            Future.successful(
-              Results.TooManyRequests(
-                play.api.libs.json.Json.obj(
-                  "error" -> "RATE_LIMIT_EXCEEDED",
-                  "message" -> s"Rate limit exceeded. Maximum $maxRequests requests per $windowSeconds seconds.",
-                  "retryAfter" -> (windowStart + (windowSeconds * 1000L) - currentTime) / 1000
+            Accumulator.done(
+              Future.successful(
+                Results.TooManyRequests(
+                  play.api.libs.json.Json.obj(
+                    "error" -> "RATE_LIMIT_EXCEEDED",
+                    "message" -> s"Rate limit exceeded. Maximum $maxRequests requests per $windowSeconds seconds.",
+                    "retryAfter" -> (windowStart + (windowSeconds * 1000L) - currentTime) / 1000
+                  )
+                ).withHeaders(
+                  "X-RateLimit-Limit" -> maxRequests.toString,
+                  "X-RateLimit-Remaining" -> "0",
+                  "X-RateLimit-Reset" -> (windowStart + (windowSeconds * 1000L)).toString,
+                  "Retry-After" -> ((windowStart + (windowSeconds * 1000L) - currentTime) / 1000).toString
                 )
-              ).withHeaders(
-                "X-RateLimit-Limit" -> maxRequests.toString,
-                "X-RateLimit-Remaining" -> "0",
-                "X-RateLimit-Reset" -> (windowStart + (windowSeconds * 1000L)).toString,
-                "Retry-After" -> ((windowStart + (windowSeconds * 1000L) - currentTime) / 1000).toString
               )
             )
           } else {
