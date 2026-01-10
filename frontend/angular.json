@@ -59,7 +59,8 @@
               "buildTarget": "exam-frontend:build:production"
             },
             "development": {
-              "buildTarget": "exam-frontend:build:development"
+              "buildTarget": "exam-frontend:build:development",
+              "proxyConfig": "proxy.conf.json"
           }
           },
           "defaultConfiguration": "development"

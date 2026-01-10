@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
@@ -21,7 +21,10 @@ export class ReportListComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.loadReports();
@@ -30,15 +33,26 @@ export class ReportListComponent implements OnInit {
   loadReports() {
     this.isLoading = true;
     this.error = null;
-    this.http.get<{ data: Report[] }>('/api/v1/reports').subscribe({
-      next: (data: { data: Report[] }) => {
-        this.reports = data.data || [];
+    console.log('Loading reports from /api/v1/reports...');
+    this.http.get<{ data: Report[]; pagination: any }>('/api/v1/reports').subscribe({
+      next: (response: { data: Report[]; pagination: any }) => {
+        console.log('Reports loaded successfully:', response);
+        this.reports = response.data || [];
         this.isLoading = false;
+        this.cdr.detectChanges(); // Force change detection
+        console.log('Reports array:', this.reports);
+        console.log('isLoading set to:', this.isLoading);
       },
       error: (err: any) => {
-        this.error = 'Failed to load reports. Please try again later.';
-        this.isLoading = false;
         console.error('Error loading reports:', err);
+        console.error('Error details:', {
+          status: err.status,
+          statusText: err.statusText,
+          message: err.message,
+          error: err.error
+        });
+        this.error = `Failed to load reports: ${err.status || 'Unknown error'}. Please try again later.`;
+        this.isLoading = false;
       }
     });
   }
