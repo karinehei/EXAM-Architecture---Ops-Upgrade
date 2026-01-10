@@ -29,6 +29,7 @@ Then access:
 - Frontend: http://localhost:4200
 - Backend API: http://localhost:9000
 - Health Check: http://localhost:9000/health
+- Swagger UI: http://localhost:9000/swagger
 
 **📖 Full setup instructions**: [docs/QUICKSTART.md](docs/QUICKSTART.md)
 
@@ -46,6 +47,7 @@ Then access:
 │   ├── conf/             # Configuration files
 │   │   ├── routes        # URL routing
 │   │   ├── application.conf
+│   │   ├── api-docs/     # OpenAPI spec (for Swagger UI)
 │   │   └── evolutions/   # Database migrations
 │   ├── test/             # Unit and integration tests
 │   ├── project/          # SBT build configuration
@@ -110,6 +112,7 @@ See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for:
 
 ## API Documentation
 
+- **Swagger UI**: http://localhost:9000/swagger (Interactive API documentation)
 - **OpenAPI Spec**: [docs/api/openapi.yaml](docs/api/openapi.yaml)
 - **API Guide**: [docs/api/README.md](docs/api/README.md)
 
