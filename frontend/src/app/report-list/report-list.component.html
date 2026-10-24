@@ -1,30 +1,248 @@
-<div class="report-list">
-  <h2>Reports</h2>
-  
-  <div *ngIf="isLoading" role="status" aria-live="polite" aria-busy="true">
-    <p>Loading reports...</p>
+<section class="report-list" aria-labelledby="reports-heading">
+  <div class="report-list__header">
+    <h2 id="reports-heading">Reports</h2>
+    <p class="report-list__lede" *ngIf="isDemo">
+      Fictional portfolio data only — no real student records.
+      Search, paginate, create, edit, and delete stay in the browser.
+    </p>
+    <p class="report-list__lede" *ngIf="!isDemo">
+      Live data from the Play Framework API at <code>/api/v1/reports</code>.
+    </p>
   </div>
-  
-  <div *ngIf="error" role="alert" aria-live="assertive">
+
+  <div class="toolbar" role="search">
+    <label class="sr-only" for="report-search">Search reports</label>
+    <input
+      id="report-search"
+      type="search"
+      name="search"
+      [(ngModel)]="searchQuery"
+      (keydown.enter)="onSearchSubmit()"
+      placeholder="Search title or content"
+      autocomplete="off"
+    />
+    <button type="button" class="btn btn--primary" (click)="onSearchSubmit()">
+      Search
+    </button>
+    <button
+      type="button"
+      class="btn btn--ghost"
+      (click)="clearSearch()"
+      *ngIf="searchQuery"
+    >
+      Clear
+    </button>
+    <button type="button" class="btn btn--primary" (click)="openCreate()">
+      New report
+    </button>
+    <button
+      *ngIf="isDemo"
+      type="button"
+      class="btn btn--amber"
+      (click)="resetDemo()"
+      [disabled]="isSaving"
+    >
+      Reset demo
+    </button>
+  </div>
+
+  <div
+    class="status-region"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <p *ngIf="successMessage" class="flash flash--success">{{ successMessage }}</p>
+    <span class="sr-only">{{ statusMessage }}</span>
+  </div>
+
+  <div *ngIf="isLoading" role="status" aria-live="polite" aria-busy="true" class="state state--loading">
+    <p>Loading reports…</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" role="alert" aria-live="assertive" class="state state--error">
     <p>{{ error }}</p>
-    <button type="button" (click)="loadReports()" aria-label="Retry loading reports">
+    <button type="button" class="btn btn--primary" (click)="loadReports()" aria-label="Retry loading reports">
       Retry
     </button>
   </div>
-  
-  <div *ngIf="!isLoading && !error && reports.length === 0" role="status" aria-live="polite">
-    <p>No reports available.</p>
+
+  <div
+    *ngIf="!isLoading && !error && reports.length === 0"
+    role="status"
+    aria-live="polite"
+    class="state state--empty"
+  >
+    <p>No reports match this view.</p>
+    <button *ngIf="searchQuery" type="button" class="btn btn--ghost" (click)="clearSearch()">
+      Clear search
+    </button>
   </div>
-  
-  <ul *ngIf="!isLoading && !error && reports.length > 0" role="list" aria-label="Report list">
-    <li *ngFor="let report of reports; let i = index" role="listitem">
-      <article>
-        <h3>{{ report.title }}</h3>
-        <p *ngIf="report.content">{{ report.content }}</p>
-        <time *ngIf="report.createdAt" [attr.datetime]="report.createdAt">
-          Created: {{ report.createdAt | date:'medium' }}
+
+  <div class="report-layout" *ngIf="!isLoading && !error && reports.length > 0">
+    <div class="report-layout__list">
+      <ul role="list" aria-label="Report list" class="report-cards">
+        <li *ngFor="let report of reports" role="listitem">
+          <article
+            class="report-card"
+            [class.report-card--selected]="selected?.id === report.id"
+          >
+            <button
+              type="button"
+              class="report-card__select"
+              (click)="selectReport(report)"
+              [attr.aria-pressed]="selected?.id === report.id"
+              [attr.aria-label]="'View details for ' + report.title"
+            >
+              <h3>{{ report.title }}</h3>
+              <time [attr.datetime]="report.createdAt">
+                Created: {{ report.createdAt | date:'medium' }}
+              </time>
+            </button>
+            <div class="report-card__actions">
+              <button type="button" class="btn btn--ghost btn--sm" (click)="openEdit(report)">
+                Edit
+              </button>
+              <button type="button" class="btn btn--danger btn--sm" (click)="confirmDelete(report)">
+                Delete
+              </button>
+            </div>
+          </article>
+        </li>
+      </ul>
+
+      <nav
+        *ngIf="pagination && totalPages > 1"
+        class="pagination"
+        aria-label="Report pages"
+      >
+        <button
+          type="button"
+          class="btn btn--ghost btn--sm"
+          (click)="goToPage(page - 1)"
+          [disabled]="page <= 1"
+        >
+          Previous
+        </button>
+        <span class="pagination__status">
+          Page {{ pagination.page }} of {{ pagination.totalPages }}
+          ({{ pagination.total }} total)
+        </span>
+        <button
+          type="button"
+          class="btn btn--ghost btn--sm"
+          (click)="goToPage(page + 1)"
+          [disabled]="page >= totalPages"
+        >
+          Next
+        </button>
+      </nav>
+    </div>
+
+    <aside class="report-detail" aria-live="polite" *ngIf="selected">
+      <h3>{{ selected.title }}</h3>
+      <p class="report-detail__meta">
+        ID {{ selected.id }} ·
+        <time [attr.datetime]="selected.createdAt">
+          {{ selected.createdAt | date:'medium' }}
         </time>
-      </article>
-    </li>
-  </ul>
+      </p>
+      <p class="report-detail__content">{{ selected.content }}</p>
+      <div class="report-detail__actions">
+        <button type="button" class="btn btn--primary btn--sm" (click)="openEdit(selected)">
+          Edit
+        </button>
+        <button type="button" class="btn btn--danger btn--sm" (click)="confirmDelete(selected)">
+          Delete
+        </button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- Create / Edit dialog -->
+<div
+  *ngIf="formMode"
+  class="dialog-backdrop"
+  role="presentation"
+  (keydown)="onDialogKeydown($event)"
+>
+  <div
+    class="dialog"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="'form-dialog-title'"
+  >
+    <h2 id="form-dialog-title" #dialogTitle tabindex="-1">{{ formHeading }}</h2>
+    <form (ngSubmit)="submitForm()" novalidate>
+      <div class="field">
+        <label for="report-title">Title</label>
+        <input
+          id="report-title"
+          name="title"
+          type="text"
+          [(ngModel)]="formTitle"
+          [attr.aria-invalid]="!!formTitleError"
+          [attr.aria-describedby]="formTitleError ? 'title-error' : null"
+          maxlength="200"
+          required
+        />
+        <p *ngIf="formTitleError" id="title-error" class="field__error" role="alert">
+          {{ formTitleError }}
+        </p>
+      </div>
+      <div class="field">
+        <label for="report-content">Content</label>
+        <textarea
+          id="report-content"
+          name="content"
+          rows="6"
+          [(ngModel)]="formContent"
+          [attr.aria-invalid]="!!formContentError"
+          [attr.aria-describedby]="formContentError ? 'content-error' : null"
+          required
+        ></textarea>
+        <p *ngIf="formContentError" id="content-error" class="field__error" role="alert">
+          {{ formContentError }}
+        </p>
+      </div>
+      <div class="dialog__actions">
+        <button type="button" class="btn btn--ghost" (click)="closeForm()" [disabled]="isSaving">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="isSaving">
+          {{ isSaving ? 'Saving…' : 'Save' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete confirmation -->
+<div
+  *ngIf="deleteTarget"
+  class="dialog-backdrop"
+  role="presentation"
+  (keydown)="onDialogKeydown($event)"
+>
+  <div
+    class="dialog dialog--confirm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="delete-dialog-title"
+  >
+    <h2 id="delete-dialog-title" #deleteDialogTitle tabindex="-1">Delete report?</h2>
+    <p>
+      Delete “{{ deleteTarget.title }}”? This cannot be undone
+      <span *ngIf="isDemo"> until you reset the demo</span>.
+    </p>
+    <div class="dialog__actions">
+      <button type="button" class="btn btn--ghost" (click)="cancelDelete()" [disabled]="isSaving">
+        Cancel
+      </button>
+      <button type="button" class="btn btn--danger" (click)="performDelete()" [disabled]="isSaving">
+        {{ isSaving ? 'Deleting…' : 'Delete' }}
+      </button>
+    </div>
+  </div>
 </div>

@@ -1,8 +1,39 @@
-<div class="container">
-  <header role="banner">
-    <h1>{{ title }}</h1>
+<div class="app-shell">
+  <div *ngIf="isDemo" class="demo-banner" role="status">
+    Portfolio demo · Synthetic data · Simulated operations
+  </div>
+
+  <header class="site-header" role="banner">
+    <div class="site-header__inner">
+      <div class="site-header__brand">
+        <p class="site-header__product">{{ title }}</p>
+        <p class="site-header__tagline" *ngIf="isDemo">
+          Explore fictional reports, repository architecture, and simulated ops scenarios.
+          The full Play/Scala + PostgreSQL stack runs separately.
+        </p>
+      </div>
+      <nav class="site-nav" aria-label="Primary">
+        <a
+          routerLink="/reports"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          Reports
+        </a>
+        <a routerLink="/architecture" routerLinkActive="is-active">Architecture</a>
+        <a routerLink="/operations" routerLinkActive="is-active">Operations</a>
+      </nav>
+    </div>
   </header>
-  <main role="main">
-    <app-report-list></app-report-list>
+
+  <main class="site-main" role="main" id="main-content">
+    <router-outlet></router-outlet>
   </main>
+
+  <footer class="site-footer" *ngIf="isDemo">
+    <p>
+      Not an official CSC service · Not a complete production EXAM installation ·
+      Apache-2.0-licensed portfolio fork
+    </p>
+  </footer>
 </div>

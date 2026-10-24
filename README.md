@@ -2,9 +2,64 @@
 
 This is a fork of CSC's EXAM system with comprehensive architecture and operations improvements.
 
-**License**: [MIT License](LICENSE) - Copyright (c) 2026 Karine Heinonen
+**License**: [Apache License 2.0](LICENSE) - Copyright 2026 Karine Heinonen
 
 [![CI](https://github.com/karinehei/EXAM-Architecture---Ops-Upgrade/actions/workflows/ci.yml/badge.svg)](https://github.com/karinehei/EXAM-Architecture---Ops-Upgrade/actions/workflows/ci.yml)
+
+## Portfolio demo (browser-only)
+
+An **EXAM Architecture & Operations Showcase** can be built as a static Angular app for GitHub Pages. It lets visitors explore **synthetic reports**, a repository-grounded **architecture** view, and **simulated** operational scenarios — without running Scala, Play, PostgreSQL, Docker, or authentication services.
+
+This is a **portfolio demo**, not an official CSC service and not a complete production EXAM installation.
+
+**Expected URL after you deploy** (site is not claimed live by this documentation):
+
+https://karinehei.github.io/EXAM-Architecture---Ops-Upgrade/
+
+### What you can do in the demo
+
+- Browse, search, paginate, create, edit, and delete fictional reports (in-browser only)
+- Reset demo data to the original synthetic dataset
+- Inspect architecture components (status, paths, request flow) and repository-documented performance notes
+- Select Healthy / Database unavailable / Elevated API latency scenarios (all values simulated)
+
+### What is simulated vs real
+
+| Area | Demo build | Normal / full application |
+|------|------------|---------------------------|
+| Report data | Synthetic `sessionStorage` store | PostgreSQL via Play API |
+| Ops scenarios | Fixed browser simulations | Real health/metrics endpoints |
+| Authentication | None (no DevAuth) | Shibboleth/HAKA (prod) or optional DevAuth (local only) |
+| Backend filters | Described in UI from code | Enforced by Play filters |
+
+Demo mode **never** falls back to synthetic data after a real API failure: the demo adapter is selected only by the `demo` build configuration.
+
+### Local build and preview
+
+```bash
+cd frontend
+npm ci          # or npm install if the lockfile needs syncing
+npm run build:demo
+npm run preview:demo
+```
+
+Open the printed URL (serves under `/EXAM-Architecture---Ops-Upgrade/` to match GitHub Pages).
+
+Normal (API-backed) commands remain:
+
+```bash
+cd frontend
+npm start       # development server (proxies /api)
+npm run build   # production build with HTTP report service
+```
+
+### Manual GitHub Pages deployment
+
+1. In the GitHub repo: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+2. Run the **Deploy GitHub Pages demo** workflow (`.github/workflows/pages.yml`) via **Actions → workflow_dispatch** (manual only).
+3. After success, open https://karinehei.github.io/EXAM-Architecture---Ops-Upgrade/
+
+The workflow builds `frontend` with `npm run build:demo`, uploads only the directory that contains the generated `index.html` (and assets), and deploys with the official Pages actions. It does not publish backend config, secrets, or database files.
 
 ## Technology Stack
 
@@ -106,10 +161,11 @@ Access Swagger UI at: http://localhost:9000/swagger
 │   └── README.md         # Performance testing guide
 ├── .github/              # GitHub Actions workflows
 │   └── workflows/
-│       └── ci.yml        # CI/CD pipeline
+│       ├── ci.yml        # CI/CD pipeline
+│       └── pages.yml     # Manual GitHub Pages demo deploy
 ├── docker-compose.yml    # Local development environment
 ├── Makefile              # Convenience commands
-├── LICENSE               # MIT License
+├── LICENSE               # Apache License 2.0
 └── README.md             # This file
 ```
 
@@ -238,4 +294,4 @@ See [docs/QUICKSTART.md](docs/QUICKSTART.md) for detailed command reference.
 
 ## License
 
- [MIT License](LICENSE) - Copyright (c) 2026 Karine Heinonen
+[Apache License 2.0](LICENSE) - Copyright 2026 Karine Heinonen

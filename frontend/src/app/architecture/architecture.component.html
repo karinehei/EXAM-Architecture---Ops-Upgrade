@@ -1,0 +1,256 @@
+<section class="arch" aria-labelledby="arch-heading">
+  <h2 id="arch-heading">Architecture</h2>
+  <p class="arch__lede">
+    Compact view of runtime services versus build tooling, grounded in this repository.
+    C4 diagram files are marked planned in documentation — this interactive
+    view is a portfolio aid, not an official CSC diagram.
+  </p>
+
+  <div class="arch__grid">
+    <div class="arch__diagram" role="group" aria-label="System components">
+      <svg
+        viewBox="0 0 640 420"
+        role="img"
+        aria-labelledby="arch-svg-title arch-svg-desc"
+        class="arch-svg"
+      >
+        <title id="arch-svg-title">EXAM architecture overview</title>
+        <desc id="arch-svg-desc">
+          Browser Angular frontend connects through a reverse proxy and authentication
+          boundary to the Play Scala API, which uses PostgreSQL and HTTP filters.
+          CI, Docker, and k6 are build tooling outside the request path.
+        </desc>
+
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#64748b" />
+          </marker>
+        </defs>
+
+        <text x="20" y="28" class="svg-label">Request path (runtime)</text>
+
+        <g
+          class="svg-hit"
+          (click)="select('frontend')"
+          (keydown.enter)="select('frontend')"
+          (keydown.space)="$event.preventDefault(); select('frontend')"
+          tabindex="0"
+          role="button"
+          [attr.aria-pressed]="selectedId === 'frontend'"
+          aria-label="Angular frontend"
+        >
+          <rect x="40" y="50" width="160" height="56" rx="4"
+            [attr.class]="selectedId === 'frontend' ? 'box box--active' : 'box'" />
+          <text x="120" y="84" text-anchor="middle" class="box-text">Angular frontend</text>
+        </g>
+
+        <g
+          class="svg-hit"
+          (click)="select('proxy')"
+          (keydown.enter)="select('proxy')"
+          (keydown.space)="$event.preventDefault(); select('proxy')"
+          tabindex="0"
+          role="button"
+          [attr.aria-pressed]="selectedId === 'proxy'"
+          aria-label="Reverse proxy"
+        >
+          <rect x="240" y="50" width="160" height="56" rx="4"
+            [attr.class]="selectedId === 'proxy' ? 'box box--active' : 'box'" />
+          <text x="320" y="84" text-anchor="middle" class="box-text">Reverse proxy</text>
+        </g>
+
+        <g
+          class="svg-hit"
+          (click)="select('auth')"
+          (keydown.enter)="select('auth')"
+          (keydown.space)="$event.preventDefault(); select('auth')"
+          tabindex="0"
+          role="button"
+          [attr.aria-pressed]="selectedId === 'auth'"
+          aria-label="Authentication boundary"
+        >
+          <rect x="440" y="50" width="160" height="56" rx="4"
+            [attr.class]="selectedId === 'auth' ? 'box box--active' : 'box'" />
+          <text x="520" y="78" text-anchor="middle" class="box-text">Auth boundary</text>
+          <text x="520" y="94" text-anchor="middle" class="box-sub">Shibboleth / HAKA</text>
+        </g>
+
+        <g
+          class="svg-hit"
+          (click)="select('filters')"
+          (keydown.enter)="select('filters')"
+          (keydown.space)="$event.preventDefault(); select('filters')"
+          tabindex="0"
+          role="button"
+          [attr.aria-pressed]="selectedId === 'filters'"
+          aria-label="Backend HTTP filters"
+        >
+          <rect x="40" y="150" width="160" height="56" rx="4"
+            [attr.class]="selectedId === 'filters' ? 'box box--active' : 'box'" />
+          <text x="120" y="184" text-anchor="middle" class="box-text">HTTP filters</text>
+        </g>
+
+        <g
+          class="svg-hit"
+          (click)="select('api')"
+          (keydown.enter)="select('api')"
+          (keydown.space)="$event.preventDefault(); select('api')"
+          tabindex="0"
+          role="button"
+          [attr.aria-pressed]="selectedId === 'api'"
+          aria-label="Play Scala REST API"
+        >
+          <rect x="240" y="150" width="160" height="56" rx="4"
+            [attr.class]="selectedId === 'api' ? 'box box--active' : 'box'" />
+          <text x="320" y="178" text-anchor="middle" class="box-text">Play / Scala API</text>
+          <text x="320" y="194" text-anchor="middle" class="box-sub">/api/v1/reports</text>
+        </g>
+
+        <g
+          class="svg-hit"
+          (click)="select('db')"
+          (keydown.enter)="select('db')"
+          (keydown.space)="$event.preventDefault(); select('db')"
+          tabindex="0"
+          role="button"
+          [attr.aria-pressed]="selectedId === 'db'"
+          aria-label="PostgreSQL database"
+        >
+          <rect x="440" y="150" width="160" height="56" rx="4"
+            [attr.class]="selectedId === 'db' ? 'box box--active' : 'box'" />
+          <text x="520" y="184" text-anchor="middle" class="box-text">PostgreSQL</text>
+        </g>
+
+        <g
+          class="svg-hit"
+          (click)="select('observability')"
+          (keydown.enter)="select('observability')"
+          (keydown.space)="$event.preventDefault(); select('observability')"
+          tabindex="0"
+          role="button"
+          [attr.aria-pressed]="selectedId === 'observability'"
+          aria-label="Health and metrics"
+        >
+          <rect x="240" y="250" width="160" height="56" rx="4"
+            [attr.class]="selectedId === 'observability' ? 'box box--active' : 'box'" />
+          <text x="320" y="284" text-anchor="middle" class="box-text">Health &amp; metrics</text>
+        </g>
+
+        <text x="20" y="330" class="svg-label">Outside request path</text>
+
+        <g
+          class="svg-hit"
+          (click)="select('ci')"
+          (keydown.enter)="select('ci')"
+          (keydown.space)="$event.preventDefault(); select('ci')"
+          tabindex="0"
+          role="button"
+          [attr.aria-pressed]="selectedId === 'ci'"
+          aria-label="CI Docker and k6 tooling"
+        >
+          <rect x="40" y="340" width="160" height="48" rx="4"
+            [attr.class]="selectedId === 'ci' ? 'box box--tool box--active' : 'box box--tool'" />
+          <text x="120" y="370" text-anchor="middle" class="box-text">CI / Docker / k6</text>
+        </g>
+
+        <g
+          class="svg-hit"
+          (click)="select('c4')"
+          (keydown.enter)="select('c4')"
+          (keydown.space)="$event.preventDefault(); select('c4')"
+          tabindex="0"
+          role="button"
+          [attr.aria-pressed]="selectedId === 'c4'"
+          aria-label="C4 documentation planned"
+        >
+          <rect x="240" y="340" width="160" height="48" rx="4"
+            [attr.class]="selectedId === 'c4' ? 'box box--planned box--active' : 'box box--planned'" />
+          <text x="320" y="370" text-anchor="middle" class="box-text">C4 docs (planned)</text>
+        </g>
+
+        <path d="M200 78 H240" class="flow" marker-end="url(#arrow)" />
+        <path d="M400 78 H440" class="flow" marker-end="url(#arrow)" />
+        <path d="M520 106 V150" class="flow" marker-end="url(#arrow)" />
+        <path d="M320 106 V150" class="flow" marker-end="url(#arrow)" />
+        <path d="M240 178 H200" class="flow" marker-end="url(#arrow)" />
+        <path d="M400 178 H440" class="flow" marker-end="url(#arrow)" />
+        <path d="M320 206 V250" class="flow" marker-end="url(#arrow)" />
+      </svg>
+
+      <ol class="arch-text-list" aria-label="Architecture components text equivalent">
+        <li *ngFor="let node of nodes">
+          <button
+            type="button"
+            class="arch-text-list__btn"
+            [class.is-active]="selectedId === node.id"
+            (click)="select(node.id)"
+            [attr.aria-pressed]="selectedId === node.id"
+          >
+            <span class="arch-text-list__label">{{ node.label }}</span>
+            <span class="badge" [attr.data-status]="node.status">{{ statusLabel(node.status) }}</span>
+          </button>
+        </li>
+      </ol>
+    </div>
+
+    <article class="arch__detail" [attr.aria-label]="'Details for ' + selected.label">
+      <h3>{{ selected.label }}</h3>
+      <p class="badge" [attr.data-status]="selected.status">{{ statusLabel(selected.status) }}</p>
+      <p>{{ selected.responsibility }}</p>
+      <h4>Repository paths</h4>
+      <ul>
+        <li *ngFor="let path of selected.paths"><code>{{ path }}</code></li>
+      </ul>
+      <p *ngIf="selected.notes" class="arch__note">{{ selected.notes }}</p>
+    </article>
+  </div>
+
+  <section class="flow-doc" aria-labelledby="flow-heading">
+    <h3 id="flow-heading">Report request flow</h3>
+    <ol>
+      <li>Browser loads the Angular app (this demo serves static assets only).</li>
+      <li>In a full stack run, the UI calls <code>GET/POST/PUT/DELETE /api/v1/reports</code>.</li>
+      <li>Reverse proxy forwards to Play; filters attach <code>X-Request-ID</code>, security headers, rate limits, and audit logs.</li>
+      <li><code>ReportController</code> delegates to <code>ReportRepository</code> (Slick → PostgreSQL).</li>
+      <li>JSON response returns paginated <code>data</code> + <code>pagination</code> matching OpenAPI.</li>
+    </ol>
+    <p>
+      CI, Docker, and k6 exercise or package the system; they are not part of the live request path.
+    </p>
+  </section>
+
+  <section class="perf-evidence" aria-labelledby="perf-heading">
+    <h3 id="perf-heading">Performance evidence</h3>
+    <p>
+      The following figures are <strong>repository-documented results</strong> from
+      <time datetime="2026-01-09">2026-01-09</time>. This showcase did not re-run the load tests.
+    </p>
+    <ul>
+      <li>
+        Workload: k6 against <code>GET /api/v1/reports</code>, ~4 minutes, ramp to 10 then 20 VUs,
+        1000 reports seeded — see
+        <a href="https://github.com/karinehei/EXAM-Architecture---Ops-Upgrade/blob/main/perf/baseline-results.md"
+           rel="noopener noreferrer" target="_blank">perf/baseline-results.md</a>
+        and
+        <a href="https://github.com/karinehei/EXAM-Architecture---Ops-Upgrade/blob/main/perf/improvement-results.md"
+           rel="noopener noreferrer" target="_blank">perf/improvement-results.md</a>.
+      </li>
+      <li>
+        Documented baseline avg latency 187&nbsp;ms (p95 487&nbsp;ms); after changes, documented
+        avg 142&nbsp;ms (p95 342&nbsp;ms). Environment: local <code>http://localhost:9000</code>, k6 v0.47.0.
+      </li>
+      <li>
+        Raw k6 JSON output is not committed; reproducibility details beyond the markdown summaries
+        and <code>perf/load-test.js</code> are limited.
+      </li>
+      <li>
+        Index caveat: migration
+        <code>database/migrations/002_add_gin_index.sql</code> defines a GIN index on
+        <code>to_tsvector(...)</code>, while <code>ReportRepository</code> still filters with SQL
+        <code>LIKE '%…%'</code>. A tsvector GIN index is not used by those <code>LIKE</code> operators;
+        documented GIN-related gains for filter queries should be treated with that limitation.
+        Parallel count/data queries and the <code>created_at DESC</code> index remain consistent with the code.
+      </li>
+    </ul>
+  </section>
+</section>

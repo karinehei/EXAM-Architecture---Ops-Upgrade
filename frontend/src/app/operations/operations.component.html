@@ -1,0 +1,107 @@
+<section class="ops" aria-labelledby="ops-heading">
+  <h2 id="ops-heading">Operations &amp; security</h2>
+  <p class="ops__lede">
+    Deterministic scenarios for portfolio exploration. All service states, latency figures,
+    and timeline events are <strong>simulated</strong> in the browser — they do not probe
+    infrastructure or call backend health endpoints.
+  </p>
+
+  <div class="ops__scenarios" role="tablist" aria-label="Operational scenarios">
+    <button
+      *ngFor="let scenario of scenarios"
+      type="button"
+      role="tab"
+      class="ops__tab"
+      [class.is-active]="selectedId === scenario.id"
+      [attr.aria-selected]="selectedId === scenario.id"
+      [id]="'tab-' + scenario.id"
+      [attr.aria-controls]="'panel-' + scenario.id"
+      (click)="select(scenario.id)"
+    >
+      {{ scenario.title }}
+    </button>
+  </div>
+
+  <div
+    class="ops__panel"
+    role="tabpanel"
+    [id]="'panel-' + selected.id"
+    [attr.aria-labelledby]="'tab-' + selected.id"
+  >
+    <p class="ops__summary">{{ selected.summary }}</p>
+
+    <h3>Simulated service states</h3>
+    <ul class="ops__services" role="list">
+      <li *ngFor="let svc of selected.services" class="ops__service" [attr.data-status]="svc.status">
+        <span class="ops__service-name">{{ svc.name }}</span>
+        <span class="ops__service-status">{{ statusLabel(svc.status) }}</span>
+        <span class="ops__service-detail">{{ svc.detail }}</span>
+      </li>
+    </ul>
+
+    <h3>Illustrative latency <span class="sim-tag">(simulated)</span></h3>
+    <dl class="ops__latency">
+      <div>
+        <dt>p50</dt>
+        <dd>{{ selected.latencyMs.p50 }} ms</dd>
+      </div>
+      <div>
+        <dt>p95</dt>
+        <dd>{{ selected.latencyMs.p95 }} ms</dd>
+      </div>
+      <div>
+        <dt>p99</dt>
+        <dd>{{ selected.latencyMs.p99 }} ms</dd>
+      </div>
+    </dl>
+
+    <h3>Event timeline <span class="sim-tag">(simulated)</span></h3>
+    <ol class="ops__timeline">
+      <li *ngFor="let event of selected.timeline">
+        <time>{{ event.time }}</time>
+        <span>{{ event.message }}</span>
+      </li>
+    </ol>
+
+    <h3>What an operator would investigate next</h3>
+    <ul>
+      <li *ngFor="let step of selected.investigateNext">{{ step }}</li>
+    </ul>
+  </div>
+
+  <section class="ops__security" aria-labelledby="sec-heading">
+    <h3 id="sec-heading">Backend security controls (from repository code)</h3>
+    <p>
+      These protections are implemented in the Play application filters — not in this static demo UI.
+      Selecting a simulated scenario above does not enforce roles or change security posture.
+    </p>
+    <ul>
+      <li>
+        <strong>Authentication:</strong> Production path is Shibboleth/HAKA (documented).
+        <code>DevAuthFilter</code> can inject mock <code>X-User-*</code> headers when
+        <code>exam.dev.auth.enabled</code> / <code>DEV_AUTH_ENABLED</code> is true — suitable only
+        for local development, never for this public GitHub Pages demo.
+      </li>
+      <li>
+        <strong>Rate limiting:</strong> <code>RateLimitFilter</code> — token bucket per IP,
+        default 100 requests / 60 seconds on <code>/api/v1/</code> paths (configurable).
+      </li>
+      <li>
+        <strong>Security headers:</strong> <code>SecurityHeadersFilter</code> — HSTS, CSP,
+        X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
+      </li>
+      <li>
+        <strong>Correlation IDs:</strong> <code>CorrelationIdFilter</code> — reads or generates
+        <code>X-Request-ID</code>, adds it to MDC and response headers.
+      </li>
+      <li>
+        <strong>Audit logging:</strong> <code>AuditLogFilter</code> — structured access logs for
+        API requests (user, IP, endpoint, status) when enabled.
+      </li>
+    </ul>
+    <p class="ops__disclaimer">
+      This page is a portfolio showcase. It is not an official CSC service and not a complete
+      production EXAM installation.
+    </p>
+  </section>
+</section>
