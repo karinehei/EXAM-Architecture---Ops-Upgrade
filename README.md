@@ -2,9 +2,15 @@
 
 This is a fork of CSC's EXAM system with comprehensive architecture and operations improvements.
 
-**License**: [Apache License 2.0](LICENSE) - Copyright 2026 Karine Heinonen
-
 [![CI](https://github.com/karinehei/EXAM-Architecture---Ops-Upgrade/actions/workflows/ci.yml/badge.svg)](https://github.com/karinehei/EXAM-Architecture---Ops-Upgrade/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)](frontend/)
+[![Scala](https://img.shields.io/badge/Scala-2.13-DC322F?logo=scala&logoColor=white)](backend/)
+[![Play Framework](https://img.shields.io/badge/Play-2.8-000000?logo=playframework&logoColor=white)](backend/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](database/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](docker-compose.yml)
+
+**License**: [Apache License 2.0](LICENSE) — Copyright 2026 Karine Heinonen
 
 ## Portfolio demo (browser-only)
 
